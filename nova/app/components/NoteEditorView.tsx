@@ -1,6 +1,46 @@
 "use client";
 
 import { useState } from "react";
+import {
+  FileText,
+  Star,
+  Folder,
+  FileSymlink,
+  Archive,
+  Tag,
+  Trash2,
+  Plus,
+  Menu,
+  Settings,
+  RefreshCw,
+  UserCircle,
+  type LucideIcon,
+} from "lucide-react";
+
+/**
+ * GardenNotes — Note Editor View
+ *
+ * Converted from static HTML to React + TypeScript + Tailwind.
+ * Serif font swapped: Source Serif 4 -> Ibarra Real Nova (used for
+ * headings, body copy, and the markdown editor text).
+ *
+ * Add this to your Next.js <head> (or _document.tsx / layout.tsx):
+ *
+ *   <link rel="preconnect" href="https://fonts.googleapis.com" />
+ *   <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+ *   <link
+ *     href="https://fonts.googleapis.com/css2?family=Ibarra+Real+Nova:ital,wght@0,400..700;1,400..700&family=Inter:wght@400;500&family=JetBrains+Mono&display=swap"
+ *     rel="stylesheet"
+ *   />
+ *
+ * Tailwind theme extension (tailwind.config.ts):
+ *
+ *   fontFamily: {
+ *     serif: ['"Ibarra Real Nova"', 'serif'],
+ *     ui: ['Inter', 'sans-serif'],
+ *     mono: ['"JetBrains Mono"', 'monospace'],
+ *   }
+ */
 
 interface Tag {
   label: string;
@@ -13,15 +53,15 @@ interface NoteData {
 }
 
 interface SidebarItem {
-  icon: string;
+  icon: LucideIcon;
   label: string;
   active?: boolean;
 }
 
 const sidebarNav: SidebarItem[] = [
-  { icon: "description", label: "All Notes", active: true },
-  { icon: "star", label: "Starred" },
-  { icon: "folder", label: "Folders" },
+  { icon: FileText, label: "All Notes", active: true },
+  { icon: Star, label: "Starred" },
+  { icon: Folder, label: "Folders" },
 ];
 
 const folderNotes = [
@@ -30,8 +70,8 @@ const folderNotes = [
 ];
 
 const sidebarFooter: SidebarItem[] = [
-  { icon: "sell", label: "Tags" },
-  { icon: "delete", label: "Trash" },
+  { icon: Tag, label: "Tags" },
+  { icon: Trash2, label: "Trash" },
 ];
 
 const note: NoteData = {
@@ -69,7 +109,7 @@ export default function NoteEditorView() {
           type="button"
           className="mx-4 mb-6 flex items-center justify-center gap-2 border border-slate-300 bg-beige-200 px-4 py-2 font-ui text-sm font-medium text-slate-800 transition-colors hover:bg-slate-300/60 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600"
         >
-          <span className="material-symbols-outlined text-[18px]">add</span>
+          <Plus size={18} />
           New Note
         </button>
 
@@ -83,9 +123,7 @@ export default function NoteEditorView() {
                   : "text-slate-600 hover:bg-slate-200/60 dark:text-slate-400 dark:hover:bg-slate-700/60"
               }`}
             >
-              <span className="material-symbols-outlined text-[18px]">
-                {item.icon}
-              </span>
+              <item.icon size={18} />
               <span>{item.label}</span>
             </div>
           ))}
@@ -100,18 +138,14 @@ export default function NoteEditorView() {
                     : "text-slate-500 hover:bg-slate-200/60 dark:text-slate-400 dark:hover:bg-slate-700/60"
                 }`}
               >
-                <span className="material-symbols-outlined text-[14px]">
-                  article
-                </span>
+                <FileSymlink size={14} />
                 <span>{n.label}</span>
               </div>
             ))}
           </div>
 
           <div className="flex cursor-pointer items-center gap-3 px-3 py-2 font-ui text-sm text-slate-600 transition-colors hover:bg-slate-200/60 dark:text-slate-400 dark:hover:bg-slate-700/60">
-            <span className="material-symbols-outlined text-[18px]">
-              inventory_2
-            </span>
+            <Archive size={18} />
             <span>Archive</span>
           </div>
         </nav>
@@ -122,9 +156,7 @@ export default function NoteEditorView() {
               key={item.label}
               className="flex cursor-pointer items-center gap-3 px-3 py-2 font-ui text-sm text-slate-600 transition-colors hover:bg-slate-200/60 dark:text-slate-400 dark:hover:bg-slate-700/60"
             >
-              <span className="material-symbols-outlined text-[18px]">
-                {item.icon}
-              </span>
+              <item.icon size={18} />
               <span>{item.label}</span>
             </div>
           ))}
@@ -143,26 +175,28 @@ export default function NoteEditorView() {
       <main className="flex h-full flex-1 flex-col bg-beige-100 dark:bg-slate-900">
         <header className="sticky top-0 z-20 flex h-14 w-full items-center justify-between border-b border-slate-300 bg-beige-100 px-4 dark:border-slate-700 dark:bg-slate-900 md:px-6">
           <div className="flex items-center gap-4 text-slate-700 dark:text-slate-300">
-            <span
-              className="material-symbols-outlined cursor-pointer transition-colors hover:text-slate-900 dark:hover:text-white md:hidden"
+            <Menu
+              size={20}
+              className="cursor-pointer transition-colors hover:text-slate-900 dark:hover:text-white md:hidden"
               onClick={() => setSidebarOpen((v) => !v)}
-            >
-              menu
-            </span>
+            />
             <span className="hidden font-ui text-sm text-slate-500 dark:text-slate-400 sm:inline">
               {note.path}
             </span>
           </div>
           <div className="flex items-center gap-4 text-slate-700 dark:text-slate-300">
-            <span className="material-symbols-outlined cursor-pointer transition-colors hover:text-slate-900 dark:hover:text-white">
-              settings
-            </span>
-            <span className="material-symbols-outlined cursor-pointer transition-colors hover:text-slate-900 dark:hover:text-white">
-              sync
-            </span>
-            <span className="material-symbols-outlined cursor-pointer transition-colors hover:text-slate-900 dark:hover:text-white">
-              account_circle
-            </span>
+            <Settings
+              size={20}
+              className="cursor-pointer transition-colors hover:text-slate-900 dark:hover:text-white"
+            />
+            <RefreshCw
+              size={20}
+              className="cursor-pointer transition-colors hover:text-slate-900 dark:hover:text-white"
+            />
+            <UserCircle
+              size={20}
+              className="cursor-pointer transition-colors hover:text-slate-900 dark:hover:text-white"
+            />
           </div>
         </header>
 
