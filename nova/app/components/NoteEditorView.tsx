@@ -2,31 +2,6 @@
 
 import { useState } from "react";
 
-/**
- * GardenNotes — Note Editor View
- *
- * Converted from static HTML to React + TypeScript + Tailwind.
- * Serif font swapped: Source Serif 4 -> Ibarra Real Nova (used for
- * headings, body copy, and the markdown editor text).
- *
- * Add this to your Next.js <head> (or _document.tsx / layout.tsx):
- *
- *   <link rel="preconnect" href="https://fonts.googleapis.com" />
- *   <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
- *   <link
- *     href="https://fonts.googleapis.com/css2?family=Ibarra+Real+Nova:ital,wght@0,400..700;1,400..700&family=Inter:wght@400;500&family=JetBrains+Mono&display=swap"
- *     rel="stylesheet"
- *   />
- *
- * Tailwind theme extension (tailwind.config.ts):
- *
- *   fontFamily: {
- *     serif: ['"Ibarra Real Nova"', 'serif'],
- *     ui: ['Inter', 'sans-serif'],
- *     mono: ['"JetBrains Mono"', 'monospace'],
- *   }
- */
-
 interface Tag {
   label: string;
 }
