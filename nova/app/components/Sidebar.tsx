@@ -11,14 +11,10 @@ import {
   Plus,
   type LucideIcon,
 } from "lucide-react";
+import type { Note } from "@/lib/notes";
 
 interface SidebarNavItem {
   icon: LucideIcon;
-  label: string;
-  active?: boolean;
-}
-
-interface SidebarNote {
   label: string;
   active?: boolean;
 }
@@ -27,11 +23,6 @@ const sidebarNav: SidebarNavItem[] = [
   { icon: FileText, label: "All Notes", active: true },
   { icon: Star, label: "Starred" },
   { icon: Folder, label: "Folders" },
-];
-
-const folderNotes: SidebarNote[] = [
-  { label: "On the Nature of Systems", active: true },
-  { label: "Knowledge Graphs", active: false },
 ];
 
 const sidebarFooter: SidebarNavItem[] = [
@@ -43,9 +34,19 @@ interface SidebarProps {
   open: boolean;
   onClose: () => void;
   onNewNote?: () => void;
+  notes: Note[];
+  selectedNoteId: string | null;
+  onSelectNote: (id: string) => void;
 }
 
-export default function Sidebar({ open, onClose, onNewNote }: SidebarProps) {
+export default function Sidebar({
+  open,
+  onClose,
+  onNewNote,
+  notes,
+  selectedNoteId,
+  onSelectNote,
+}: SidebarProps) {
   return (
     <>
       <aside
@@ -91,20 +92,29 @@ export default function Sidebar({ open, onClose, onNewNote }: SidebarProps) {
             </div>
           ))}
 
+          {/* Note list — driven by real data now, not hardcoded */}
           <div className="my-1 ml-8 flex flex-col gap-1">
-            {folderNotes.map((n) => (
-              <div
-                key={n.label}
-                className={`flex cursor-pointer items-center gap-2 px-2 py-1 text-sm transition-colors ${
-                  n.active
-                    ? "text-slate-800 dark:text-slate-200"
-                    : "text-slate-500 hover:bg-slate-200/60 dark:text-slate-400 dark:hover:bg-slate-700/60"
-                }`}
-              >
-                <FileSymlink size={14} />
-                <span>{n.label}</span>
-              </div>
-            ))}
+            {notes.map((note) => {
+              const isActive = note.id === selectedNoteId;
+              return (
+                <button
+                  key={note.id}
+                  type="button"
+                  onClick={() => {
+                    onSelectNote(note.id);
+                    onClose(); // auto-close sidebar on mobile after picking a note
+                  }}
+                  className={`flex items-center gap-2 px-2 py-1 text-left text-sm transition-colors ${
+                    isActive
+                      ? "text-slate-800 dark:text-slate-200"
+                      : "text-slate-500 hover:bg-slate-200/60 dark:text-slate-400 dark:hover:bg-slate-700/60"
+                  }`}
+                >
+                  <FileSymlink size={14} className="shrink-0" />
+                  <span className="truncate">{note.title}</span>
+                </button>
+              );
+            })}
           </div>
 
           <div className="flex cursor-pointer items-center gap-3 px-3 py-2 font-ui text-sm text-slate-600 transition-colors hover:bg-slate-200/60 dark:text-slate-400 dark:hover:bg-slate-700/60">

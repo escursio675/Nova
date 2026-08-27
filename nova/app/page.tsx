@@ -4,27 +4,25 @@ import { useState } from "react";
 import AppShell from "./components/Appshell";
 import NoteView from "./components/Noteview";
 import EmptyState from "./components/Emptystate";
-
-// Placeholder note data — replace with a real fetch (Mongo/API) once wired up.
-const sampleNote = {
-  title: "On the Nature of Systems",
-  tags: [{ label: "#systems" }, { label: "#logic" }, { label: "#dark-mode" }],
-};
-
-const samplePath = "/ Folders / Systems / On the Nature of Systems";
+import { notes } from "@/lib/notes";
 
 export default function Home() {
   // null = no note selected -> shows EmptyState.
-  // Swap this for real selection state once the sidebar is wired to real data.
-  const [selectedNote, setSelectedNote] = useState<typeof sampleNote | null>(
-    sampleNote
+  const [selectedNoteId, setSelectedNoteId] = useState<string | null>(
+    notes[0]?.id ?? null
   );
+
+  const selectedNote = notes.find((n) => n.id === selectedNoteId) ?? null;
 
   return (
     <AppShell
-      path={selectedNote ? samplePath : undefined}
+      path={selectedNote?.path}
+      notes={notes}
+      selectedNoteId={selectedNoteId}
+      onSelectNote={setSelectedNoteId}
       onNewNote={() => {
-        // TODO: create a real note via API, then setSelectedNote(newNote)
+        // TODO: create a real note via API, push it into `notes`,
+        // then setSelectedNoteId(newNote.id)
         console.log("New note requested");
       }}
     >
