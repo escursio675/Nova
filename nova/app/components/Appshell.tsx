@@ -12,6 +12,7 @@ interface AppShellProps {
   path?: string;
   onNewNote?: () => void;
   onOpenSearch: () => void;
+  onOpenSettings: () => void;
   notes: Note[];
   selectedNoteId: string | null;
   onSelectNote: (id: string) => void;
@@ -28,6 +29,7 @@ export default function AppShell({
   path,
   onNewNote,
   onOpenSearch,
+  onOpenSettings,
   notes,
   selectedNoteId,
   onSelectNote,
@@ -79,6 +81,7 @@ export default function AppShell({
             <Settings
               size={20}
               className="cursor-pointer transition-colors hover:text-slate-900 dark:hover:text-white"
+              onClick={onOpenSettings}
             />
             <RefreshCw
               size={20}

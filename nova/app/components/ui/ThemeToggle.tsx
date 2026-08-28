@@ -2,35 +2,24 @@
 
 import { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
-
-const STORAGE_KEY = "theme";
-
-type Theme = "light" | "dark";
-
-function applyTheme(theme: Theme) {
-  const root = document.documentElement;
-  if (theme === "dark") {
-    root.classList.add("dark");
-  } else {
-    root.classList.remove("dark");
-  }
-}
+import { resolveTheme, setThemeChoice, type ThemeChoice } from "@/lib/theme";
 
 export default function ThemeToggle() {
-  // Start undefined so we don't render the wrong icon before mount.
-  const [theme, setTheme] = useState<Theme | undefined>(undefined);
+  // Undefined until mount, so we don't render the wrong icon before hydration.
+  const [resolved, setResolved] = useState<"light" | "dark" | undefined>(
+    undefined
+  );
 
   useEffect(() => {
-    // On mount, read whatever the blocking script already applied to <html>.
+    // Read whatever the blocking script in layout.tsx already applied.
     const isDark = document.documentElement.classList.contains("dark");
-    setTheme(isDark ? "dark" : "light");
+    setResolved(isDark ? "dark" : "light");
   }, []);
 
   const toggle = () => {
-    const next: Theme = theme === "dark" ? "light" : "dark";
-    setTheme(next);
-    applyTheme(next);
-    localStorage.setItem(STORAGE_KEY, next);
+    const next: ThemeChoice = resolved === "dark" ? "light" : "dark";
+    setThemeChoice(next); // explicit choice — overrides "system" if that was set
+    setResolved(resolveTheme(next));
   };
 
   return (
@@ -38,12 +27,9 @@ export default function ThemeToggle() {
       type="button"
       onClick={toggle}
       aria-label="Toggle theme"
-      className="flex h-8 w-8 items-center justify-center rounded-full
-      text-slate-600 transition-colors hover:bg-slate-200/60 hover:text-slate-900
-      dark:text-slate-300 dark:hover:bg-slate-700/60 dark:hover:text-white"
+      className="flex h-8 w-8 items-center justify-center rounded-full text-slate-600 transition-colors hover:bg-slate-200/60 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-700/60 dark:hover:text-white"
     >
-      {/* Render nothing until mounted to avoid a hydration mismatch. */}
-      {theme === undefined ? null : theme === "dark" ? (
+      {resolved === undefined ? null : resolved === "dark" ? (
         <Sun size={18} />
       ) : (
         <Moon size={18} />

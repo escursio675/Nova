@@ -8,12 +8,14 @@ import CommandPalette from "./components/Commandpalette";
 import TagBrowser from "./components/Tagbrowser";
 import { notes } from "@/lib/notes";
 import type { View } from "@/lib/view";
+import SettingsPanel from "./components/Settingspanel";
 
 export default function Home() {
   const [selectedNoteId, setSelectedNoteId] = useState<string | null>(
     notes[0]?.id ?? null
   );
   const [searchOpen, setSearchOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [view, setView] = useState<View>("notes");
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
@@ -33,12 +35,12 @@ export default function Home() {
 
   const handleSelectNote = (id: string) => {
     setSelectedNoteId(id);
-    setView("notes"); // jumping to a note (e.g. from tag view or search) always switches back
+    setView("notes");
   };
 
   const handleChangeView = (nextView: View) => {
     setView(nextView);
-    if (nextView === "tags") setSelectedTag(null); // reset drill-down each time you open Tags
+    if (nextView === "tags") setSelectedTag(null);
   };
 
   return (
@@ -51,6 +53,7 @@ export default function Home() {
         view={view}
         onChangeView={handleChangeView}
         onOpenSearch={() => setSearchOpen(true)}
+        onOpenSettings={() => setSettingsOpen(true)}
         onNewNote={() => {
           // TODO: create a real note via API, push it into `notes`,
           // then setSelectedNoteId(newNote.id)
@@ -76,6 +79,11 @@ export default function Home() {
         onClose={() => setSearchOpen(false)}
         notes={notes}
         onSelectNote={handleSelectNote}
+      />
+
+      <SettingsPanel
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
       />
     </>
   );
