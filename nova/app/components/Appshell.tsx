@@ -5,6 +5,7 @@ import { Menu, Search, Settings, RefreshCw, UserCircle } from "lucide-react";
 import Sidebar from "./Sidebar";
 import ThemeToggle from "./ui/ThemeToggle";
 import type { Note } from "@/lib/notes";
+import type { View } from "@/lib/view";
 
 interface AppShellProps {
   /** Breadcrumb-style path shown in the header, e.g. "/ Folders / Systems / ..." */
@@ -14,12 +15,14 @@ interface AppShellProps {
   notes: Note[];
   selectedNoteId: string | null;
   onSelectNote: (id: string) => void;
+  view: View;
+  onChangeView: (view: View) => void;
   children: ReactNode;
 }
 
 /**
- * Shared layout: sidebar + top header. Drop either <NoteView /> or
- * <EmptyState /> (or any future content) into `children`.
+ * Shared layout: sidebar + top header. Drop either <NoteView />,
+ * <EmptyState />, or <TagBrowser /> into `children`.
  */
 export default function AppShell({
   path,
@@ -28,6 +31,8 @@ export default function AppShell({
   notes,
   selectedNoteId,
   onSelectNote,
+  view,
+  onChangeView,
   children,
 }: AppShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -41,6 +46,8 @@ export default function AppShell({
         notes={notes}
         selectedNoteId={selectedNoteId}
         onSelectNote={onSelectNote}
+        view={view}
+        onChangeView={onChangeView}
       />
 
       <main className="flex h-full flex-1 flex-col bg-beige-100 dark:bg-slate-900">

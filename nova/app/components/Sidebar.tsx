@@ -9,26 +9,9 @@ import {
   Tag,
   Trash2,
   Plus,
-  type LucideIcon,
 } from "lucide-react";
 import type { Note } from "@/lib/notes";
-
-interface SidebarNavItem {
-  icon: LucideIcon;
-  label: string;
-  active?: boolean;
-}
-
-const sidebarNav: SidebarNavItem[] = [
-  { icon: FileText, label: "All Notes", active: true },
-  { icon: Star, label: "Starred" },
-  { icon: Folder, label: "Folders" },
-];
-
-const sidebarFooter: SidebarNavItem[] = [
-  { icon: Tag, label: "Tags" },
-  { icon: Trash2, label: "Trash" },
-];
+import type { View } from "@/lib/view";
 
 interface SidebarProps {
   open: boolean;
@@ -37,6 +20,8 @@ interface SidebarProps {
   notes: Note[];
   selectedNoteId: string | null;
   onSelectNote: (id: string) => void;
+  view: View;
+  onChangeView: (view: View) => void;
 }
 
 export default function Sidebar({
@@ -46,6 +31,8 @@ export default function Sidebar({
   notes,
   selectedNoteId,
   onSelectNote,
+  view,
+  onChangeView,
 }: SidebarProps) {
   return (
     <>
@@ -78,44 +65,55 @@ export default function Sidebar({
         </button>
 
         <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-2">
-          {sidebarNav.map((item) => (
-            <div
-              key={item.label}
-              className={`flex cursor-pointer items-center gap-3 px-3 py-2 font-ui text-sm transition-colors ${
-                item.active
-                  ? "border-l-2 border-slate-700 bg-slate-300/20 font-bold text-slate-800 dark:border-slate-300 dark:bg-slate-700/30 dark:text-slate-200"
-                  : "text-slate-600 hover:bg-slate-200/60 dark:text-slate-400 dark:hover:bg-slate-700/60"
-              }`}
-            >
-              <item.icon size={18} />
-              <span>{item.label}</span>
-            </div>
-          ))}
+          <button
+            type="button"
+            onClick={() => onChangeView("notes")}
+            className={`flex items-center gap-3 px-3 py-2 text-left font-ui text-sm transition-colors ${
+              view === "notes"
+                ? "border-l-2 border-slate-700 bg-slate-300/20 font-bold text-slate-800 dark:border-slate-300 dark:bg-slate-700/30 dark:text-slate-200"
+                : "text-slate-600 hover:bg-slate-200/60 dark:text-slate-400 dark:hover:bg-slate-700/60"
+            }`}
+          >
+            <FileText size={18} />
+            <span>All Notes</span>
+          </button>
 
-          {/* Note list — driven by real data now, not hardcoded */}
-          <div className="my-1 ml-8 flex flex-col gap-1">
-            {notes.map((note) => {
-              const isActive = note.id === selectedNoteId;
-              return (
-                <button
-                  key={note.id}
-                  type="button"
-                  onClick={() => {
-                    onSelectNote(note.id);
-                    onClose(); // auto-close sidebar on mobile after picking a note
-                  }}
-                  className={`flex items-center gap-2 px-2 py-1 text-left text-sm transition-colors ${
-                    isActive
-                      ? "text-slate-800 dark:text-slate-200"
-                      : "text-slate-500 hover:bg-slate-200/60 dark:text-slate-400 dark:hover:bg-slate-700/60"
-                  }`}
-                >
-                  <FileSymlink size={14} className="shrink-0" />
-                  <span className="truncate">{note.title}</span>
-                </button>
-              );
-            })}
+          <div className="flex cursor-pointer items-center gap-3 px-3 py-2 font-ui text-sm text-slate-600 transition-colors hover:bg-slate-200/60 dark:text-slate-400 dark:hover:bg-slate-700/60">
+            <Star size={18} />
+            <span>Starred</span>
           </div>
+
+          <div className="flex cursor-pointer items-center gap-3 px-3 py-2 font-ui text-sm text-slate-600 transition-colors hover:bg-slate-200/60 dark:text-slate-400 dark:hover:bg-slate-700/60">
+            <Folder size={18} />
+            <span>Folders</span>
+          </div>
+
+          {/* Note list — only shown while browsing notes, not while in the tag view */}
+          {view === "notes" && (
+            <div className="my-1 ml-8 flex flex-col gap-1">
+              {notes.map((note) => {
+                const isActive = note.id === selectedNoteId;
+                return (
+                  <button
+                    key={note.id}
+                    type="button"
+                    onClick={() => {
+                      onSelectNote(note.id);
+                      onClose();
+                    }}
+                    className={`flex items-center gap-2 px-2 py-1 text-left text-sm transition-colors ${
+                      isActive
+                        ? "text-slate-800 dark:text-slate-200"
+                        : "text-slate-500 hover:bg-slate-200/60 dark:text-slate-400 dark:hover:bg-slate-700/60"
+                    }`}
+                  >
+                    <FileSymlink size={14} className="shrink-0" />
+                    <span className="truncate">{note.title}</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
 
           <div className="flex cursor-pointer items-center gap-3 px-3 py-2 font-ui text-sm text-slate-600 transition-colors hover:bg-slate-200/60 dark:text-slate-400 dark:hover:bg-slate-700/60">
             <Archive size={18} />
@@ -124,15 +122,26 @@ export default function Sidebar({
         </nav>
 
         <div className="mt-auto flex flex-col gap-1 border-t border-slate-300 px-2 pt-4 dark:border-slate-700">
-          {sidebarFooter.map((item) => (
-            <div
-              key={item.label}
-              className="flex cursor-pointer items-center gap-3 px-3 py-2 font-ui text-sm text-slate-600 transition-colors hover:bg-slate-200/60 dark:text-slate-400 dark:hover:bg-slate-700/60"
-            >
-              <item.icon size={18} />
-              <span>{item.label}</span>
-            </div>
-          ))}
+          <button
+            type="button"
+            onClick={() => {
+              onChangeView("tags");
+              onClose();
+            }}
+            className={`flex items-center gap-3 px-3 py-2 text-left font-ui text-sm transition-colors ${
+              view === "tags"
+                ? "border-l-2 border-slate-700 bg-slate-300/20 font-bold text-slate-800 dark:border-slate-300 dark:bg-slate-700/30 dark:text-slate-200"
+                : "text-slate-600 hover:bg-slate-200/60 dark:text-slate-400 dark:hover:bg-slate-700/60"
+            }`}
+          >
+            <Tag size={18} />
+            <span>Tags</span>
+          </button>
+
+          <div className="flex cursor-pointer items-center gap-3 px-3 py-2 font-ui text-sm text-slate-600 transition-colors hover:bg-slate-200/60 dark:text-slate-400 dark:hover:bg-slate-700/60">
+            <Trash2 size={18} />
+            <span>Trash</span>
+          </div>
         </div>
       </aside>
 

@@ -5,13 +5,17 @@ import AppShell from "./components/Appshell";
 import NoteView from "./components/Noteview";
 import EmptyState from "./components/Emptystate";
 import CommandPalette from "./components/Commandpalette";
+import TagBrowser from "./components/Tagbrowser";
 import { notes } from "@/lib/notes";
+import type { View } from "@/lib/view";
 
 export default function Home() {
   const [selectedNoteId, setSelectedNoteId] = useState<string | null>(
     notes[0]?.id ?? null
   );
   const [searchOpen, setSearchOpen] = useState(false);
+  const [view, setView] = useState<View>("notes");
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
   const selectedNote = notes.find((n) => n.id === selectedNoteId) ?? null;
 
@@ -27,13 +31,25 @@ export default function Home() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  const handleSelectNote = (id: string) => {
+    setSelectedNoteId(id);
+    setView("notes"); // jumping to a note (e.g. from tag view or search) always switches back
+  };
+
+  const handleChangeView = (nextView: View) => {
+    setView(nextView);
+    if (nextView === "tags") setSelectedTag(null); // reset drill-down each time you open Tags
+  };
+
   return (
     <>
       <AppShell
-        path={selectedNote?.path}
+        path={view === "notes" ? selectedNote?.path : undefined}
         notes={notes}
         selectedNoteId={selectedNoteId}
-        onSelectNote={setSelectedNoteId}
+        onSelectNote={handleSelectNote}
+        view={view}
+        onChangeView={handleChangeView}
         onOpenSearch={() => setSearchOpen(true)}
         onNewNote={() => {
           // TODO: create a real note via API, push it into `notes`,
@@ -41,7 +57,14 @@ export default function Home() {
           console.log("New note requested");
         }}
       >
-        {selectedNote ? (
+        {view === "tags" ? (
+          <TagBrowser
+            notes={notes}
+            selectedTag={selectedTag}
+            onSelectTag={setSelectedTag}
+            onSelectNote={handleSelectNote}
+          />
+        ) : selectedNote ? (
           <NoteView note={selectedNote} />
         ) : (
           <EmptyState onNewNote={() => console.log("New note requested")} />
@@ -52,7 +75,7 @@ export default function Home() {
         open={searchOpen}
         onClose={() => setSearchOpen(false)}
         notes={notes}
-        onSelectNote={setSelectedNoteId}
+        onSelectNote={handleSelectNote}
       />
     </>
   );
