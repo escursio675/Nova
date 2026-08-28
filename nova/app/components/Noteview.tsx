@@ -1,12 +1,22 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import type { AnchorHTMLAttributes } from "react";
 import type { Note } from "@/lib/notes";
+import {
+  transformWikilinks,
+  isWikilinkHref,
+  getWikilinkTarget,
+} from "@/lib/wikilinks";
 
 interface NoteViewProps {
   note: Note;
+  notes: Note[];
+  onSelectNote: (id: string) => void;
 }
 
-export default function NoteView({ note }: NoteViewProps) {
+export default function NoteView({ note, notes, onSelectNote }: NoteViewProps) {
+  const body = transformWikilinks(note.body);
+
   return (
     <div className="flex w-full flex-1 justify-center overflow-y-auto py-8 sm:py-10">
       <article className="w-full max-w-[800px] px-4 sm:px-6">
@@ -41,8 +51,52 @@ export default function NoteView({ note }: NoteViewProps) {
             prose-a:text-slate-700 dark:prose-a:text-slate-300
           "
         >
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>
-            {note.body}
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            components={{
+              a: (props: AnchorHTMLAttributes<HTMLAnchorElement>) => {
+                const { href, children } = props;
+
+                if (isWikilinkHref(href)) {
+                  const targetTitle = getWikilinkTarget(href);
+                  const targetNote = notes.find(
+                    (n) => n.title.toLowerCase() === targetTitle.toLowerCase()
+                  );
+
+                  if (targetNote) {
+                    return (
+                      <button
+                        type="button"
+                        onClick={() => onSelectNote(targetNote.id)}
+                        className="cursor-pointer border-b border-dotted border-slate-400 font-medium text-slate-800 no-underline hover:border-solid hover:text-slate-950 dark:text-slate-200 dark:hover:text-white"
+                      >
+                        {children}
+                      </button>
+                    );
+                  }
+
+                  // Obsidian convention: unresolved links render distinctly
+                  // (usually reddish) so you can spot broken links at a glance.
+                  return (
+                    <span
+                      className="cursor-not-allowed border-b border-dotted border-red-400/60 text-red-500/80 dark:text-red-400/80"
+                      title={`No note titled "${targetTitle}"`}
+                    >
+                      {children}
+                    </span>
+                  );
+                }
+
+                // Regular external link — open in a new tab as usual.
+                return (
+                  <a href={href} target="_blank" rel="noopener noreferrer">
+                    {children}
+                  </a>
+                );
+              },
+            }}
+          >
+            {body}
           </ReactMarkdown>
         </div>
       </article>

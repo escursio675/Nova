@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { Menu, Search, Settings, RefreshCw, UserCircle } from "lucide-react";
+import { Menu, Search, Settings, Keyboard, UserCircle, ArrowLeft } from "lucide-react";
 import Sidebar from "./Sidebar";
 import ThemeToggle from "./ui/ThemeToggle";
 import type { ParsedVault } from "@/lib/vault";
@@ -14,6 +14,9 @@ interface AppShellProps {
   onVaultLoaded: (vault: ParsedVault) => void;
   onOpenSearch: () => void;
   onOpenSettings: () => void;
+  onOpenShortcuts: () => void;
+  canGoBack: boolean;
+  onGoBack: () => void;
   selectedNoteId: string | null;
   onSelectNote: (id: string) => void;
   view: View;
@@ -31,6 +34,9 @@ export default function AppShell({
   onVaultLoaded,
   onOpenSearch,
   onOpenSettings,
+  onOpenShortcuts,
+  canGoBack,
+  onGoBack,
   selectedNoteId,
   onSelectNote,
   view,
@@ -54,12 +60,21 @@ export default function AppShell({
 
       <main className="flex h-full flex-1 flex-col bg-beige-100 dark:bg-slate-900">
         <header className="sticky top-0 z-20 flex h-14 w-full items-center justify-between border-b border-slate-300 bg-beige-100 px-4 dark:border-slate-700 dark:bg-slate-900 md:px-6">
-          <div className="flex items-center gap-4 text-slate-700 dark:text-slate-300">
+          <div className="flex items-center gap-3 text-slate-700 dark:text-slate-300">
             <Menu
               size={20}
               className="cursor-pointer transition-colors hover:text-slate-900 dark:hover:text-white md:hidden"
               onClick={() => setSidebarOpen((v) => !v)}
             />
+            <button
+              type="button"
+              onClick={onGoBack}
+              disabled={!canGoBack}
+              aria-label="Go back"
+              className="flex items-center justify-center rounded-full p-1 text-slate-500 transition-colors enabled:hover:bg-slate-200/60 enabled:hover:text-slate-900 disabled:opacity-30 dark:text-slate-400 dark:enabled:hover:bg-slate-700/60 dark:enabled:hover:text-white"
+            >
+              <ArrowLeft size={18} />
+            </button>
             {path && (
               <span className="hidden font-ui text-sm text-slate-500 dark:text-slate-400 sm:inline">
                 {path}
@@ -83,9 +98,10 @@ export default function AppShell({
               className="cursor-pointer transition-colors hover:text-slate-900 dark:hover:text-white"
               onClick={onOpenSettings}
             />
-            <RefreshCw
+            <Keyboard
               size={20}
               className="cursor-pointer transition-colors hover:text-slate-900 dark:hover:text-white"
+              onClick={onOpenShortcuts}
             />
             <UserCircle
               size={20}
