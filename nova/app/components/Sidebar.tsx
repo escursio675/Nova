@@ -1,6 +1,6 @@
 "use client";
 
-import { FileText, Star, Folder as FolderIcon, Tag, Trash2 } from "lucide-react";
+import { FileText, Tag } from "lucide-react";
 import FileTree from "./Filetree";
 import VaultUpload from "./Vaultupload";
 import type { ParsedVault, FolderNode } from "@/lib/vault";
@@ -64,11 +64,6 @@ export default function Sidebar({
             <span>All Notes</span>
           </button>
 
-          <div className="flex cursor-pointer items-center gap-3 px-3 py-2 font-ui text-sm text-slate-600 transition-colors hover:bg-slate-200/60 dark:text-slate-400 dark:hover:bg-slate-700/60">
-            <Star size={18} />
-            <span>Starred</span>
-          </div>
-
           {/* Real file tree, once a vault's been loaded */}
           {view === "notes" && vault && (
             <div className="my-2 flex flex-col gap-0.5 border-t border-slate-300/50 pt-2 dark:border-slate-700/50">
@@ -106,11 +101,6 @@ export default function Sidebar({
             <Tag size={18} />
             <span>Tags</span>
           </button>
-
-          <div className="flex cursor-pointer items-center gap-3 px-3 py-2 font-ui text-sm text-slate-600 transition-colors hover:bg-slate-200/60 dark:text-slate-400 dark:hover:bg-slate-700/60">
-            <Trash2 size={18} />
-            <span>Trash</span>
-          </div>
         </div>
       </aside>
 
