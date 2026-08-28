@@ -6,22 +6,21 @@ import NoteView from "./components/Noteview";
 import EmptyState from "./components/Emptystate";
 import CommandPalette from "./components/Commandpalette";
 import TagBrowser from "./components/Tagbrowser";
-import { notes } from "@/lib/notes";
-import type { View } from "@/lib/view";
 import SettingsPanel from "./components/Settingspanel";
+import type { ParsedVault } from "@/lib/vault";
+import type { View } from "@/lib/view";
 
 export default function Home() {
-  const [selectedNoteId, setSelectedNoteId] = useState<string | null>(
-    notes[0]?.id ?? null
-  );
+  const [vault, setVault] = useState<ParsedVault | null>(null);
+  const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [view, setView] = useState<View>("notes");
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
+  const notes = vault?.notes ?? [];
   const selectedNote = notes.find((n) => n.id === selectedNoteId) ?? null;
 
-  // Global Cmd/Ctrl+K shortcut to open the command palette from anywhere.
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
@@ -32,6 +31,12 @@ export default function Home() {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
+
+  const handleVaultLoaded = (loaded: ParsedVault) => {
+    setVault(loaded);
+    setSelectedNoteId(loaded.notes[0]?.id ?? null);
+    setView("notes");
+  };
 
   const handleSelectNote = (id: string) => {
     setSelectedNoteId(id);
@@ -47,18 +52,14 @@ export default function Home() {
     <>
       <AppShell
         path={view === "notes" ? selectedNote?.path : undefined}
-        notes={notes}
+        vault={vault}
+        onVaultLoaded={handleVaultLoaded}
         selectedNoteId={selectedNoteId}
         onSelectNote={handleSelectNote}
         view={view}
         onChangeView={handleChangeView}
         onOpenSearch={() => setSearchOpen(true)}
         onOpenSettings={() => setSettingsOpen(true)}
-        onNewNote={() => {
-          // TODO: create a real note via API, push it into `notes`,
-          // then setSelectedNoteId(newNote.id)
-          console.log("New note requested");
-        }}
       >
         {view === "tags" ? (
           <TagBrowser
@@ -70,7 +71,7 @@ export default function Home() {
         ) : selectedNote ? (
           <NoteView note={selectedNote} />
         ) : (
-          <EmptyState onNewNote={() => console.log("New note requested")} />
+          <EmptyState vault={vault} onVaultLoaded={handleVaultLoaded} />
         )}
       </AppShell>
 

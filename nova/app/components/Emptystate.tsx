@@ -1,35 +1,39 @@
 "use client";
 
-import { FileText, Plus } from "lucide-react";
+import { FolderOpen, FileText } from "lucide-react";
+import VaultUpload from "./Vaultupload";
+import type { ParsedVault } from "@/lib/vault";
 
 interface EmptyStateProps {
-  onNewNote?: () => void;
+  vault: ParsedVault | null;
+  onVaultLoaded: (vault: ParsedVault) => void;
 }
 
-export default function EmptyState({ onNewNote }: EmptyStateProps) {
+export default function EmptyState({ vault, onVaultLoaded }: EmptyStateProps) {
+  const hasVault = Boolean(vault);
+
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-4 px-6 text-center">
       <div className="flex h-16 w-16 items-center justify-center rounded-full bg-slate-200/60 text-slate-400 dark:bg-slate-800 dark:text-slate-500">
-        <FileText size={28} />
+        {hasVault ? <FileText size={28} /> : <FolderOpen size={28} />}
       </div>
 
       <div className="space-y-1">
         <h2 className="font-serif text-xl font-semibold text-slate-800 dark:text-slate-200">
-          No note selected
+          {hasVault ? "No note selected" : "No vault loaded"}
         </h2>
         <p className="max-w-xs font-ui text-sm text-slate-500 dark:text-slate-400">
-          Pick a note from the sidebar, or create a new one to start writing.
+          {hasVault
+            ? "Pick a note from the sidebar to start reading."
+            : "Open a folder containing your Obsidian markdown files to get started."}
         </p>
       </div>
 
-      <button
-        type="button"
-        onClick={onNewNote}
-        className="mt-2 flex items-center gap-2 border border-slate-300 bg-beige-200 px-4 py-2 font-ui text-sm font-medium text-slate-800 transition-colors hover:bg-slate-300/60 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600"
-      >
-        <Plus size={16} />
-        New Note
-      </button>
+      {!hasVault && (
+        <div className="mt-2">
+          <VaultUpload onLoaded={onVaultLoaded} variant="dropzone" />
+        </div>
+      )}
     </div>
   );
 }

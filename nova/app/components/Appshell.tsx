@@ -4,16 +4,16 @@ import { useState, type ReactNode } from "react";
 import { Menu, Search, Settings, RefreshCw, UserCircle } from "lucide-react";
 import Sidebar from "./Sidebar";
 import ThemeToggle from "./ui/ThemeToggle";
-import type { Note } from "@/lib/notes";
+import type { ParsedVault } from "@/lib/vault";
 import type { View } from "@/lib/view";
 
 interface AppShellProps {
-  /** Breadcrumb-style path shown in the header, e.g. "/ Folders / Systems / ..." */
+  /** Breadcrumb-style path shown in the header, e.g. "/ VaultName / Folder / Note" */
   path?: string;
-  onNewNote?: () => void;
+  vault: ParsedVault | null;
+  onVaultLoaded: (vault: ParsedVault) => void;
   onOpenSearch: () => void;
   onOpenSettings: () => void;
-  notes: Note[];
   selectedNoteId: string | null;
   onSelectNote: (id: string) => void;
   view: View;
@@ -27,10 +27,10 @@ interface AppShellProps {
  */
 export default function AppShell({
   path,
-  onNewNote,
+  vault,
+  onVaultLoaded,
   onOpenSearch,
   onOpenSettings,
-  notes,
   selectedNoteId,
   onSelectNote,
   view,
@@ -44,8 +44,8 @@ export default function AppShell({
       <Sidebar
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
-        onNewNote={onNewNote}
-        notes={notes}
+        vault={vault}
+        onVaultLoaded={onVaultLoaded}
         selectedNoteId={selectedNoteId}
         onSelectNote={onSelectNote}
         view={view}
