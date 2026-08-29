@@ -20,7 +20,11 @@ export interface ParsedVault {
   vaultName: string;
   tree: FolderNode;
   notes: Note[];
+  /** Maps a file's relative path (from vault root) to a browser-usable object URL. */
+  assets: Record<string, string>;
 }
+
+const IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp", ".bmp"];
 
 // Matches "#tag" but not "## Heading" — requires no space between # and the
 // tag text, and requires the # itself to be at the start of a line or
@@ -42,27 +46,43 @@ function isIgnored(relativePath: string): boolean {
   return relativePath.split("/").some((segment) => segment.startsWith("."));
 }
 
+function isImage(fileName: string): boolean {
+  const lower = fileName.toLowerCase();
+  return IMAGE_EXTENSIONS.some((ext) => lower.endsWith(ext));
+}
+
 /**
  * Reads an uploaded folder (via <input webkitdirectory>) and builds:
  * - a folder tree for the sidebar file browser
  * - a flat notes array (for search, tags, and note lookup)
+ * - an assets map of image files, so embedded images can actually render
  */
 export async function parseVaultFiles(fileList: FileList): Promise<ParsedVault> {
-  const files = Array.from(fileList).filter(
-    (f) => f.name.endsWith(".md") && !isIgnored(f.webkitRelativePath)
+  const allFiles = Array.from(fileList).filter(
+    (f) => !isIgnored(f.webkitRelativePath)
   );
+  const markdownFiles = allFiles.filter((f) => f.name.endsWith(".md"));
+  const imageFiles = allFiles.filter((f) => isImage(f.name));
 
-  if (files.length === 0) {
+  if (markdownFiles.length === 0) {
     throw new Error("No markdown files found in that folder.");
   }
 
   // webkitRelativePath looks like "VaultName/Folder/Sub/Note.md"
-  const vaultName = files[0].webkitRelativePath.split("/")[0];
+  const vaultName = markdownFiles[0].webkitRelativePath.split("/")[0];
 
   const root: FolderNode = { type: "folder", name: vaultName, path: "", children: [] };
   const notes: Note[] = [];
+  const assets: Record<string, string> = {};
 
-  for (const file of files) {
+  // Images: just need a relative-path -> blob URL map, no tree entry needed
+  // since they're not browsable/selectable content, only referenced from notes.
+  for (const file of imageFiles) {
+    const relativePath = file.webkitRelativePath.split("/").slice(1).join("/");
+    assets[relativePath] = URL.createObjectURL(file);
+  }
+
+  for (const file of markdownFiles) {
     const content = await file.text();
     const relativePath = file.webkitRelativePath; // includes vault root segment
     const segments = relativePath.split("/").slice(1); // drop the vault root segment
@@ -106,7 +126,41 @@ export async function parseVaultFiles(fileList: FileList): Promise<ParsedVault> 
 
   sortTree(root);
 
-  return { vaultName, tree: root, notes };
+  return { vaultName, tree: root, notes, assets };
+}
+
+/** Releases all blob URLs for a vault — call before loading a new one to avoid leaking memory. */
+export function releaseVaultAssets(vault: ParsedVault | null) {
+  if (!vault) return;
+  for (const url of Object.values(vault.assets)) {
+    URL.revokeObjectURL(url);
+  }
+}
+
+/**
+ * Resolves an image reference (from either ![[wikilink]] embeds or standard
+ * ![alt](path) markdown) to an actual object URL. Tries an exact relative
+ * path match first, then falls back to matching by filename alone, since
+ * Obsidian often references images by bare filename regardless of which
+ * subfolder they actually live in.
+ */
+export function resolveAssetSrc(
+  target: string,
+  assets: Record<string, string>
+): string | null {
+  if (!target) return null;
+  const decoded = decodeURIComponent(target);
+
+  if (assets[decoded]) return assets[decoded];
+
+  const basename = decoded.split("/").pop()?.toLowerCase();
+  if (!basename) return null;
+
+  const matchKey = Object.keys(assets).find(
+    (key) => key.split("/").pop()?.toLowerCase() === basename
+  );
+
+  return matchKey ? assets[matchKey] : null;
 }
 
 // Folders first, then files, both alphabetical — matches Obsidian's default sort.

@@ -10,7 +10,7 @@ import SettingsPanel from "./components/Settingspanel";
 import ShortcutsModal from "./components/Shortcutsmodal";
 import type { ParsedVault } from "@/lib/vault";
 import type { View } from "@/lib/view";
-
+import { releaseVaultAssets } from "@/lib/vault";
 
 interface HistoryState {
   stack: string[];
@@ -49,6 +49,7 @@ export default function Home() {
   }, [history]);
 
   const handleVaultLoaded = (loaded: ParsedVault) => {
+    releaseVaultAssets(vault); // free the previous vault's image blob URLs
     setVault(loaded);
     const firstId = loaded.notes[0]?.id ?? null;
     setSelectedNoteId(firstId);
@@ -116,6 +117,7 @@ export default function Home() {
             note={selectedNote}
             notes={notes}
             onSelectNote={handleSelectNote}
+            assets={vault?.assets ?? {}}
           />
         ) : (
           <EmptyState vault={vault} onVaultLoaded={handleVaultLoaded} />

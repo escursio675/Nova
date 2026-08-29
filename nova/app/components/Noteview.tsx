@@ -1,7 +1,7 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import type { AnchorHTMLAttributes } from "react";
 import type { Note } from "@/lib/notes";
+import { resolveAssetSrc } from "@/lib/vault";
 import {
   transformWikilinks,
   isWikilinkHref,
@@ -12,9 +12,11 @@ interface NoteViewProps {
   note: Note;
   notes: Note[];
   onSelectNote: (id: string) => void;
+  /** Maps a vault-relative file path to a browser-usable object URL (images live here). */
+  assets: Record<string, string>;
 }
 
-export default function NoteView({ note, notes, onSelectNote }: NoteViewProps) {
+export default function NoteView({ note, notes, onSelectNote, assets }: NoteViewProps) {
   const body = transformWikilinks(note.body);
 
   return (
@@ -54,9 +56,7 @@ export default function NoteView({ note, notes, onSelectNote }: NoteViewProps) {
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             components={{
-              a: (props: AnchorHTMLAttributes<HTMLAnchorElement>) => {
-                const { href, children } = props;
-
+              a: ({ href, children }) => {
                 if (isWikilinkHref(href)) {
                   const targetTitle = getWikilinkTarget(href);
                   const targetNote = notes.find(
@@ -75,8 +75,6 @@ export default function NoteView({ note, notes, onSelectNote }: NoteViewProps) {
                     );
                   }
 
-                  // Obsidian convention: unresolved links render distinctly
-                  // (usually reddish) so you can spot broken links at a glance.
                   return (
                     <span
                       className="cursor-not-allowed border-b border-dotted border-red-400/60 text-red-500/80 dark:text-red-400/80"
@@ -87,11 +85,44 @@ export default function NoteView({ note, notes, onSelectNote }: NoteViewProps) {
                   );
                 }
 
-                // Regular external link — open in a new tab as usual.
                 return (
                   <a href={href} target="_blank" rel="noopener noreferrer">
                     {children}
                   </a>
+                );
+              },
+
+              img: ({ src, alt }) => {
+                // react-markdown types `src` as `string | Blob`, but markdown
+                // parsing only ever produces string URLs in practice — this
+                // guard satisfies TypeScript and safely bails on the
+                // (unreachable in normal use) Blob case.
+                if (!src || typeof src !== "string") return null;
+
+                // ![[embed.png]] arrives here as "#wikilink:embed.png" (see
+                // transformWikilinks); plain markdown images arrive as
+                // whatever relative path was written in the note.
+                const rawTarget = isWikilinkHref(src) ? getWikilinkTarget(src) : src;
+                const resolved = resolveAssetSrc(rawTarget, assets);
+
+                if (resolved) {
+                  // eslint-disable-next-line @next/next/no-img-element
+                  return (
+                    <img
+                      src={resolved}
+                      alt={alt ?? rawTarget}
+                      className="max-w-full rounded border border-slate-300 dark:border-slate-700"
+                    />
+                  );
+                }
+
+                // Image referenced in the note but not found among uploaded
+                // files — likely outside the vault folder, or not an image
+                // this app recognizes yet.
+                return (
+                  <span className="inline-block border border-dashed border-slate-400 bg-slate-200/40 px-3 py-2 font-mono text-xs text-slate-500 dark:border-slate-600 dark:bg-slate-800/40 dark:text-slate-400">
+                    Image not found: {rawTarget}
+                  </span>
                 );
               },
             }}
