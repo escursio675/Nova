@@ -45,9 +45,10 @@ export default function Sidebar({
   };
 
   const collapseAll = () => {
-    if (!vault) return;
-    setCollapsedPaths(new Set(getAllFolderPaths(vault.tree as FolderNode)));
-  };
+  if (!vault) return;
+  const paths = getAllFolderPaths(vault.tree as FolderNode);
+  setCollapsedPaths(new Set(paths));
+};
 
   return (
     <>

@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { ChevronRight, ChevronDown, Folder, FileText } from "lucide-react";
 import type { VaultNode } from "@/lib/vault";
 
@@ -8,6 +7,9 @@ interface FileTreeProps {
   nodes: VaultNode[];
   selectedNoteId: string | null;
   onSelectNote: (id: string) => void;
+  /** Paths of folders that are currently collapsed. Everything not in here is open. */
+  collapsedPaths: Set<string>;
+  onToggleFolder: (path: string) => void;
   depth?: number;
 }
 
@@ -15,6 +17,8 @@ export default function FileTree({
   nodes,
   selectedNoteId,
   onSelectNote,
+  collapsedPaths,
+  onToggleFolder,
   depth = 0,
 }: FileTreeProps) {
   return (
@@ -26,6 +30,8 @@ export default function FileTree({
             node={node}
             selectedNoteId={selectedNoteId}
             onSelectNote={onSelectNote}
+            collapsedPaths={collapsedPaths}
+            onToggleFolder={onToggleFolder}
             depth={depth}
           />
         ) : (
@@ -53,32 +59,38 @@ function FolderRow({
   node,
   selectedNoteId,
   onSelectNote,
+  collapsedPaths,
+  onToggleFolder,
   depth,
 }: {
   node: Extract<VaultNode, { type: "folder" }>;
   selectedNoteId: string | null;
   onSelectNote: (id: string) => void;
+  collapsedPaths: Set<string>;
+  onToggleFolder: (path: string) => void;
   depth: number;
 }) {
-  const [open, setOpen] = useState(true);
+  const isOpen = !collapsedPaths.has(node.path);
 
   return (
     <div>
       <button
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => onToggleFolder(node.path)}
         style={{ paddingLeft: `${4 + depth * 14}px` }}
         className="flex w-full items-center gap-1.5 py-1 pr-2 text-left text-sm text-slate-600 transition-colors hover:bg-slate-200/60 dark:text-slate-400 dark:hover:bg-slate-700/60"
       >
-        {open ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+        {isOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
         <Folder size={14} className="shrink-0" />
         <span className="truncate font-medium">{node.name}</span>
       </button>
-      {open && node.children.length > 0 && (
+      {isOpen && node.children.length > 0 && (
         <FileTree
           nodes={node.children}
           selectedNoteId={selectedNoteId}
           onSelectNote={onSelectNote}
+          collapsedPaths={collapsedPaths}
+          onToggleFolder={onToggleFolder}
           depth={depth + 1}
         />
       )}
