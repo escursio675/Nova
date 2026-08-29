@@ -1,3 +1,64 @@
 @import "tailwindcss";
 @config "../tailwind.config.ts";
 @custom-variant dark (&:where(.dark, .dark *));
+
+/* Syntax highlighting for code blocks (rehype-highlight).
+   Hand-tuned rather than an imported theme, so it matches the app's
+   beige/slate palette in both light and dark mode from the same file. */
+.hljs {
+  color: #1e293b; /* slate-800 */
+}
+.dark .hljs {
+  color: #e2e8f0; /* slate-200 */
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: #64748b; /* slate-500 */
+  font-style: italic;
+}
+.dark .hljs-comment,
+.dark .hljs-quote {
+  color: #94a3b8; /* slate-400 */
+}
+
+.hljs-keyword,
+.hljs-selector-tag {
+  color: #7c3aed; /* violet-600 */
+}
+.dark .hljs-keyword,
+.dark .hljs-selector-tag {
+  color: #c4b5fd; /* violet-300 */
+}
+
+.hljs-string,
+.hljs-attr {
+  color: #15803d; /* green-700 */
+}
+.dark .hljs-string,
+.dark .hljs-attr {
+  color: #86efac; /* green-300 */
+}
+
+.hljs-number {
+  color: #b45309; /* amber-700 */
+}
+.dark .hljs-number {
+  color: #fcd34d; /* amber-300 */
+}
+
+.hljs-title,
+.hljs-title.function_ {
+  color: #1d4ed8; /* blue-700 */
+}
+.dark .hljs-title,
+.dark .hljs-title.function_ {
+  color: #93c5fd; /* blue-300 */
+}
+
+.hljs-literal {
+  color: #b91c1c; /* red-700 */
+}
+.dark .hljs-literal {
+  color: #fca5a5; /* red-300 */
+}

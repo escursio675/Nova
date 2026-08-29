@@ -1,7 +1,12 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import rehypeRaw from "rehype-raw";
+import rehypeHighlight from "rehype-highlight";
 import type { Note } from "@/lib/notes";
 import { resolveAssetSrc } from "@/lib/vault";
+import { transformHighlights } from "@/lib/highlight";
 import {
   transformWikilinks,
   isWikilinkHref,
@@ -17,7 +22,7 @@ interface NoteViewProps {
 }
 
 export default function NoteView({ note, notes, onSelectNote, assets }: NoteViewProps) {
-  const body = transformWikilinks(note.body);
+  const body = transformHighlights(transformWikilinks(note.body));
 
   return (
     <div className="flex w-full flex-1 justify-center overflow-y-auto py-8 sm:py-10">
@@ -47,14 +52,18 @@ export default function NoteView({ note, notes, onSelectNote, assets }: NoteView
             prose-p:leading-relaxed
             prose-blockquote:border-l-4 prose-blockquote:border-slate-400 prose-blockquote:italic prose-blockquote:text-slate-500
             dark:prose-blockquote:border-slate-600 dark:prose-blockquote:text-slate-400
-            prose-code:font-mono prose-code:text-sm prose-code:before:content-none prose-code:after:content-none
-            prose-pre:border prose-pre:border-slate-300 prose-pre:bg-beige-200
-            dark:prose-pre:border-slate-700 dark:prose-pre:bg-slate-800
+            prose-code:font-mono prose-code:text-sm prose-code:text-slate-800 prose-code:before:content-none prose-code:after:content-none
+            dark:prose-code:text-slate-200
+            prose-pre:border prose-pre:border-slate-300 prose-pre:bg-beige-200 prose-pre:text-slate-800
+            dark:prose-pre:border-slate-700 dark:prose-pre:bg-slate-800 dark:prose-pre:text-slate-200
             prose-a:text-slate-700 dark:prose-a:text-slate-300
+            [&_mark]:rounded-none [&_mark]:bg-amber-200/70 [&_mark]:px-0.5 [&_mark]:text-inherit
+            dark:[&_mark]:bg-amber-400/20
           "
         >
           <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
+            remarkPlugins={[remarkGfm, remarkMath]}
+            rehypePlugins={[rehypeRaw, rehypeKatex, rehypeHighlight]}
             components={{
               a: ({ href, children }) => {
                 if (isWikilinkHref(href)) {

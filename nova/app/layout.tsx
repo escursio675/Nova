@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Ibarra_Real_Nova, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import "katex/dist/katex.min.css";
 
 const ibarra = Ibarra_Real_Nova({
   subsets: ["latin"],
