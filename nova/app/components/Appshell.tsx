@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { Menu, Search, Settings, Keyboard, UserCircle, ArrowLeft } from "lucide-react";
+import { PanelLeft, Search, Settings, Keyboard, ArrowLeft } from "lucide-react";
 import Sidebar from "./Sidebar";
 import ThemeToggle from "./ui/ThemeToggle";
 import type { ParsedVault } from "@/lib/vault";
@@ -43,13 +43,27 @@ export default function AppShell({
   onChangeView,
   children,
 }: AppShellProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  // Two independent states because the sidebar behaves differently per
+  // breakpoint: on mobile it's a full overlay (default closed), on desktop
+  // it pushes the content over (default open). One button toggles whichever
+  // is relevant based on the viewport width at the moment it's clicked.
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [desktopOpen, setDesktopOpen] = useState(true);
+
+  const toggleSidebar = () => {
+    if (typeof window !== "undefined" && window.innerWidth < 768) {
+      setMobileOpen((v) => !v);
+    } else {
+      setDesktopOpen((v) => !v);
+    }
+  };
 
   return (
     <div className="flex h-screen overflow-hidden bg-beige-100 text-slate-900 antialiased dark:bg-slate-900 dark:text-slate-50">
       <Sidebar
-        open={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
+        mobileOpen={mobileOpen}
+        desktopOpen={desktopOpen}
+        onCloseMobile={() => setMobileOpen(false)}
         vault={vault}
         onVaultLoaded={onVaultLoaded}
         selectedNoteId={selectedNoteId}
@@ -58,14 +72,21 @@ export default function AppShell({
         onChangeView={onChangeView}
       />
 
-      <main className="flex h-full flex-1 flex-col bg-beige-100 dark:bg-slate-900">
+      <main
+        className={`flex h-full flex-1 flex-col bg-beige-100 transition-[margin-left] duration-200 dark:bg-slate-900 ${
+          desktopOpen ? "md:ml-[260px]" : "md:ml-0"
+        }`}
+      >
         <header className="sticky top-0 z-20 flex h-14 w-full items-center justify-between border-b border-slate-300 bg-beige-100 px-4 dark:border-slate-700 dark:bg-slate-900 md:px-6">
           <div className="flex items-center gap-3 text-slate-700 dark:text-slate-300">
-            <Menu
-              size={20}
-              className="cursor-pointer transition-colors hover:text-slate-900 dark:hover:text-white md:hidden"
-              onClick={() => setSidebarOpen((v) => !v)}
-            />
+            <button
+              type="button"
+              onClick={toggleSidebar}
+              aria-label="Toggle sidebar"
+              className="flex items-center justify-center rounded-full p-1 transition-colors hover:bg-slate-200/60 hover:text-slate-900 dark:hover:bg-slate-700/60 dark:hover:text-white"
+            >
+              <PanelLeft size={20} />
+            </button>
             <button
               type="button"
               onClick={onGoBack}
@@ -102,10 +123,6 @@ export default function AppShell({
               size={20}
               className="cursor-pointer transition-colors hover:text-slate-900 dark:hover:text-white"
               onClick={onOpenShortcuts}
-            />
-            <UserCircle
-              size={20}
-              className="cursor-pointer transition-colors hover:text-slate-900 dark:hover:text-white"
             />
             <ThemeToggle />
           </div>

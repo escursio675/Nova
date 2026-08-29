@@ -119,3 +119,15 @@ function sortTree(node: FolderNode) {
     if (child.type === "folder") sortTree(child);
   }
 }
+
+/** Collects every folder path in the tree — used to implement "Collapse All". */
+export function getAllFolderPaths(node: FolderNode): string[] {
+  const paths: string[] = [];
+  for (const child of node.children) {
+    if (child.type === "folder") {
+      paths.push(child.path);
+      paths.push(...getAllFolderPaths(child));
+    }
+  }
+  return paths;
+}

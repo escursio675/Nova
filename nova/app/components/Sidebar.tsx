@@ -1,14 +1,19 @@
 "use client";
 
-import { FileText, Tag } from "lucide-react";
+import { useState } from "react";
+import { FileText, Tag, ChevronsDownUp } from "lucide-react";
 import FileTree from "./Filetree";
 import VaultUpload from "./Vaultupload";
 import type { ParsedVault, FolderNode } from "@/lib/vault";
+import { getAllFolderPaths } from "@/lib/vault";
 import type { View } from "@/lib/view";
 
 interface SidebarProps {
-  open: boolean;
-  onClose: () => void;
+  /** Whether the sidebar is visible as a mobile overlay (below the md breakpoint). */
+  mobileOpen: boolean;
+  /** Whether the sidebar is visible in the desktop push-layout (md and above). */
+  desktopOpen: boolean;
+  onCloseMobile: () => void;
   vault: ParsedVault | null;
   onVaultLoaded: (vault: ParsedVault) => void;
   selectedNoteId: string | null;
@@ -18,8 +23,9 @@ interface SidebarProps {
 }
 
 export default function Sidebar({
-  open,
-  onClose,
+  mobileOpen,
+  desktopOpen,
+  onCloseMobile,
   vault,
   onVaultLoaded,
   selectedNoteId,
@@ -27,6 +33,22 @@ export default function Sidebar({
   view,
   onChangeView,
 }: SidebarProps) {
+  const [collapsedPaths, setCollapsedPaths] = useState<Set<string>>(new Set());
+
+  const toggleFolder = (path: string) => {
+    setCollapsedPaths((prev) => {
+      const next = new Set(prev);
+      if (next.has(path)) next.delete(path);
+      else next.add(path);
+      return next;
+    });
+  };
+
+  const collapseAll = () => {
+    if (!vault) return;
+    setCollapsedPaths(new Set(getAllFolderPaths(vault.tree as FolderNode)));
+  };
+
   return (
     <>
       <aside
@@ -35,8 +57,8 @@ export default function Sidebar({
           border-r border-slate-300 bg-beige-50 py-4
           dark:border-slate-700 dark:bg-slate-800
           transition-transform duration-200
-          md:static md:translate-x-0
-          ${open ? "translate-x-0" : "-translate-x-full"}
+          ${mobileOpen ? "translate-x-0" : "-translate-x-full"}
+          ${desktopOpen ? "md:translate-x-0" : "md:-translate-x-full"}
         `}
       >
         <div className="mb-6 px-4">
@@ -64,18 +86,34 @@ export default function Sidebar({
             <span>All Notes</span>
           </button>
 
-          {/* Real file tree, once a vault's been loaded */}
           {view === "notes" && vault && (
-            <div className="my-2 flex flex-col gap-0.5 border-t border-slate-300/50 pt-2 dark:border-slate-700/50">
-              <FileTree
-                nodes={(vault.tree as FolderNode).children}
-                selectedNoteId={selectedNoteId}
-                onSelectNote={(id) => {
-                  onSelectNote(id);
-                  onClose();
-                }}
-              />
-            </div>
+            <>
+              <div className="mt-2 flex items-center justify-between border-t border-slate-300/50 px-3 pt-2 dark:border-slate-700/50">
+                <span className="font-ui text-xs font-medium uppercase tracking-wide text-slate-400 dark:text-slate-500">
+                  Files
+                </span>
+                <button
+                  type="button"
+                  onClick={collapseAll}
+                  title="Collapse all folders"
+                  className="flex items-center gap-1 text-slate-400 transition-colors hover:text-slate-700 dark:text-slate-500 dark:hover:text-slate-300"
+                >
+                  <ChevronsDownUp size={14} />
+                </button>
+              </div>
+              <div className="flex flex-col gap-0.5 pt-1">
+                <FileTree
+                  nodes={(vault.tree as FolderNode).children}
+                  selectedNoteId={selectedNoteId}
+                  onSelectNote={(id) => {
+                    onSelectNote(id);
+                    onCloseMobile();
+                  }}
+                  collapsedPaths={collapsedPaths}
+                  onToggleFolder={toggleFolder}
+                />
+              </div>
+            </>
           )}
 
           {!vault && (
@@ -90,7 +128,7 @@ export default function Sidebar({
             type="button"
             onClick={() => {
               onChangeView("tags");
-              onClose();
+              onCloseMobile();
             }}
             className={`flex items-center gap-3 px-3 py-2 text-left font-ui text-sm transition-colors ${
               view === "tags"
@@ -104,10 +142,11 @@ export default function Sidebar({
         </div>
       </aside>
 
-      {open && (
+      {/* Mobile-only backdrop — desktop collapse never shows this */}
+      {mobileOpen && (
         <div
           className="fixed inset-0 z-30 bg-black/40 md:hidden"
-          onClick={onClose}
+          onClick={onCloseMobile}
         />
       )}
     </>
