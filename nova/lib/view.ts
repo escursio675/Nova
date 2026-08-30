@@ -1,1 +1,1 @@
-export type View = "notes" | "tags";
+export type View = "notes" | "tags" | "graph";

@@ -12,6 +12,7 @@ import type { ParsedVault } from "@/lib/vault";
 import type { View } from "@/lib/view";
 import { releaseVaultAssets } from "@/lib/vault";
 import { setThemeChoice, type ThemeChoice } from "@/lib/theme";
+import GraphView from "./components/Graphview";
 
 interface HistoryState {
   stack: string[];
@@ -130,6 +131,12 @@ export default function Home() {
             notes={notes}
             selectedTag={selectedTag}
             onSelectTag={setSelectedTag}
+            onSelectNote={handleSelectNote}
+          />
+        ) : view === "graph" ? (
+          <GraphView
+            notes={notes}
+            selectedNoteId={selectedNoteId}
             onSelectNote={handleSelectNote}
           />
         ) : selectedNote ? (

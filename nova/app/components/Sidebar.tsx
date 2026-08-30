@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FileText, Tag, ChevronsDownUp } from "lucide-react";
+import { FileText, Tag, Network, ChevronsDownUp } from "lucide-react";
 import FileTree from "./Filetree";
 import VaultUpload from "./Vaultupload";
 import type { ParsedVault, FolderNode } from "@/lib/vault";
@@ -45,10 +45,9 @@ export default function Sidebar({
   };
 
   const collapseAll = () => {
-  if (!vault) return;
-  const paths = getAllFolderPaths(vault.tree as FolderNode);
-  setCollapsedPaths(new Set(paths));
-};
+    if (!vault) return;
+    setCollapsedPaths(new Set(getAllFolderPaths(vault.tree as FolderNode)));
+  };
 
   return (
     <>
@@ -139,6 +138,22 @@ export default function Sidebar({
           >
             <Tag size={18} />
             <span>Tags</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              onChangeView("graph");
+              onCloseMobile();
+            }}
+            className={`flex items-center gap-3 px-3 py-2 text-left font-ui text-sm transition-colors ${
+              view === "graph"
+                ? "border-l-2 border-slate-700 bg-slate-300/20 font-bold text-slate-800 dark:border-slate-300 dark:bg-slate-700/30 dark:text-slate-200"
+                : "text-slate-600 hover:bg-slate-200/60 dark:text-slate-400 dark:hover:bg-slate-700/60"
+            }`}
+          >
+            <Network size={18} />
+            <span>Graph</span>
           </button>
         </div>
       </aside>
