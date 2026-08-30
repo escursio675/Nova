@@ -25,7 +25,7 @@ export default function NoteView({ note, notes, onSelectNote, assets }: NoteView
   const body = transformHighlights(transformWikilinks(note.body));
 
   return (
-    <div className="flex w-full flex-1 justify-center overflow-y-auto py-8 sm:py-10">
+    <div className="flex w-full flex-1 justify-center overflow-y-auto pt-8 pb-32 sm:pt-10">
       <article className="w-full max-w-[800px] px-4 sm:px-6">
         <header className="mb-6 border-b border-slate-300 pb-4 dark:border-slate-700">
           <h1 className="mb-4 font-serif text-3xl font-bold text-slate-900 dark:text-white sm:text-4xl">

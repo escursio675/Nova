@@ -87,7 +87,7 @@ export default function AppShell({
       />
 
       <main
-        className={`flex h-full flex-1 flex-col bg-beige-100 transition-[margin-left] duration-200 dark:bg-slate-900 ${
+        className={`flex h-full min-h-0 flex-1 flex-col bg-beige-100 transition-[margin-left] duration-200 dark:bg-slate-900 ${
           desktopOpen ? "md:ml-[260px]" : "md:ml-0"
         }`}
       >
