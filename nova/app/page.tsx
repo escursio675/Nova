@@ -11,6 +11,7 @@ import ShortcutsModal from "./components/Shortcutsmodal";
 import type { ParsedVault } from "@/lib/vault";
 import type { View } from "@/lib/view";
 import { releaseVaultAssets } from "@/lib/vault";
+import { setThemeChoice, type ThemeChoice } from "@/lib/theme";
 
 interface HistoryState {
   stack: string[];
@@ -31,16 +32,35 @@ export default function Home() {
   const selectedNote = notes.find((n) => n.id === selectedNoteId) ?? null;
   const canGoBack = history.index > 0;
 
-  // Global shortcuts: Cmd/Ctrl+K for search, Cmd/Ctrl+O for back navigation.
+  // Global shortcuts: search, back navigation, theme toggle, sidebar toggle.
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const mod = e.metaKey || e.ctrlKey;
-      if (mod && e.key.toLowerCase() === "k") {
+      const key = e.key.toLowerCase();
+
+      // Plain "/" (no modifier) also opens search — but only when the user
+      // isn't already typing somewhere, or every "/" keystroke in a text
+      // field would hijack focus into the search modal instead.
+      const target = e.target as HTMLElement | null;
+      const isTyping =
+        target?.tagName === "INPUT" ||
+        target?.tagName === "TEXTAREA" ||
+        target?.isContentEditable;
+
+      if (!mod && key === "/" && !isTyping) {
         e.preventDefault();
         setSearchOpen(true);
-      } else if (mod && e.key.toLowerCase() === "o") {
+      } else if (mod && key === "k") {
+        e.preventDefault();
+        setSearchOpen(true);
+      } else if (mod && key === "o") {
         e.preventDefault(); // Ctrl/Cmd+O is "open file" by default in browsers
         goBack();
+      } else if (mod && key === "m") {
+        e.preventDefault();
+        const isDark = document.documentElement.classList.contains("dark");
+        const next: ThemeChoice = isDark ? "light" : "dark";
+        setThemeChoice(next);
       }
     };
     window.addEventListener("keydown", handleKeyDown);

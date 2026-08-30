@@ -62,3 +62,45 @@
 .dark .hljs-literal {
   color: #fca5a5; /* red-300 */
 }
+
+/* Custom scrollbars, matching the beige/slate palette instead of the
+   browser's default. Firefox and WebKit browsers (Chrome/Edge/Safari)
+   use completely different APIs, so both are needed. */
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #ddd0b3 #f5f0e6; /* thumb track */
+}
+.dark * {
+  scrollbar-color: #475569 #1e293b; /* slate-600 thumb, slate-800 track */
+}
+
+/* WebKit (Chrome, Edge, Safari) */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #f5f0e6; /* beige-100 */
+}
+::-webkit-scrollbar-thumb {
+  background-color: #ddd0b3; /* beige-300 */
+  border: 2px solid #f5f0e6;
+  background-clip: padding-box; /* makes the border act like inset padding */
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: #c9b892;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #1e293b; /* slate-800 */
+}
+.dark ::-webkit-scrollbar-thumb {
+  background-color: #475569; /* slate-600 */
+  border: 2px solid #1e293b;
+  background-clip: padding-box;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background-color: #64748b; /* slate-500 */
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { PanelLeft, Search, Settings, Keyboard, ArrowLeft } from "lucide-react";
 import Sidebar from "./Sidebar";
 import ThemeToggle from "./ui/ThemeToggle";
@@ -57,6 +57,20 @@ export default function AppShell({
       setDesktopOpen((v) => !v);
     }
   };
+
+  // Ctrl/Cmd+B toggles the sidebar. This lives here rather than in page.tsx
+  // since sidebar visibility state is local to AppShell.
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "b") {
+        e.preventDefault(); // Ctrl/Cmd+B opens the bookmarks sidebar in some browsers
+        toggleSidebar();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="flex h-screen overflow-hidden bg-beige-100 text-slate-900 antialiased dark:bg-slate-900 dark:text-slate-50">

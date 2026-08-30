@@ -12,8 +12,13 @@ interface Shortcut {
 // source of truth for what shows up in the modal.
 const shortcuts: Shortcut[] = [
   { keys: ["⌘ / Ctrl", "K"], description: "Open search" },
+  { keys: ["/"], description: "Open search" },
   { keys: ["⌘ / Ctrl", "O"], description: "Go back to the previous note" },
+  { keys: ["⌘ / Ctrl", "B"], description: "Show or hide the sidebar" },
+  { keys: ["⌘ / Ctrl", "M"], description: "Toggle light / dark theme" },
   { keys: ["Esc"], description: "Close the open modal" },
+  { keys: ["↑", "↓"], description: "Navigate results in search" },
+  { keys: ["↵"], description: "Open the highlighted search result" },
 ];
 
 interface ShortcutsModalProps {
@@ -54,7 +59,7 @@ export default function ShortcutsModal({ open, onClose }: ShortcutsModalProps) {
         <div className="flex flex-col divide-y divide-slate-300/60 px-5 dark:divide-slate-700/60">
           {shortcuts.map((s) => (
             <div
-              key={s.description}
+              key={`${s.keys.join("+")}-${s.description}`}
               className="flex items-center justify-between py-3"
             >
               <span className="font-ui text-sm text-slate-600 dark:text-slate-400">
