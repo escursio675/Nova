@@ -9,6 +9,13 @@
   --color-accent: #f5c2e7;
 }
 
+/* Text selection uses the same accent color, so it updates automatically
+   whenever the user picks a new one in Settings. */
+::selection {
+  background-color: var(--color-accent);
+  color: #1e293b; /* slate-800 — kept fixed rather than theme-dependent, since it needs to stay readable against the accent color itself, not the page background */
+}
+
 /* Syntax highlighting for code blocks (rehype-highlight).
    Hand-tuned rather than an imported theme, so it matches the app's
    beige/slate palette in both light and dark mode from the same file. */
