@@ -46,7 +46,7 @@ export default function TagBrowser({
             <button
               type="button"
               onClick={() => onSelectTag(null)}
-              className="mb-6 flex items-center gap-2 font-ui text-sm text-slate-500 transition-colors hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
+              className="mb-6 flex items-center gap-2 font-ui text-sm text-slate-500 transition-colors hover:text-accent dark:text-slate-400"
             >
               <ArrowLeft size={16} />
               All tags
@@ -63,7 +63,7 @@ export default function TagBrowser({
                   key={note.id}
                   type="button"
                   onClick={() => onSelectNote(note.id)}
-                  className="flex items-center gap-3 py-3 text-left transition-colors hover:bg-slate-200/40 dark:hover:bg-slate-800/40"
+                  className="flex items-center gap-3 py-3 text-left transition-colors hover:bg-accent/10"
                 >
                   <FileText size={16} className="shrink-0 text-slate-400" />
                   <div className="min-w-0 flex-1">
@@ -102,7 +102,7 @@ export default function TagBrowser({
                     key={tag.label}
                     type="button"
                     onClick={() => onSelectTag(tag.label)}
-                    className="flex items-center gap-2 border border-slate-300 bg-beige-200 px-3 py-2 font-mono text-sm text-slate-700 transition-colors hover:bg-slate-300/60 dark:border-slate-600 dark:bg-slate-700/50 dark:text-slate-300 dark:hover:bg-slate-600/60"
+                    className="flex items-center gap-2 border border-slate-300 bg-beige-200 px-3 py-2 font-mono text-sm text-slate-700 transition-colors hover:border-accent hover:bg-accent/15 dark:border-slate-600 dark:bg-slate-700/50 dark:text-slate-300"
                   >
                     {tag.label}
                     <span className="rounded-full bg-slate-300/60 px-1.5 text-xs text-slate-600 dark:bg-slate-600/60 dark:text-slate-300">

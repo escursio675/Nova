@@ -88,7 +88,7 @@ export default function CommandPalette({
           <button
             type="button"
             onClick={onClose}
-            className="shrink-0 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+            className="shrink-0 text-slate-400 transition-colors hover:text-accent"
             aria-label="Close search"
           >
             <X size={16} />
@@ -109,8 +109,8 @@ export default function CommandPalette({
                 onClick={() => selectAndClose(note.id)}
                 className={`flex w-full items-center gap-3 px-4 py-2 text-left transition-colors ${
                   i === activeIndex
-                    ? "bg-slate-200/60 dark:bg-slate-700/60"
-                    : "hover:bg-slate-200/40 dark:hover:bg-slate-700/40"
+                    ? "bg-accent/15"
+                    : "hover:bg-accent/10"
                 }`}
               >
                 <FileText size={16} className="shrink-0 text-slate-400" />

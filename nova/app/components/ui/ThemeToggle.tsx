@@ -27,7 +27,7 @@ export default function ThemeToggle() {
       type="button"
       onClick={toggle}
       aria-label="Toggle theme"
-      className="flex h-8 w-8 items-center justify-center rounded-full text-slate-600 transition-colors hover:bg-slate-200/60 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-700/60 dark:hover:text-white"
+      className="flex h-8 w-8 items-center justify-center rounded-full text-slate-600 transition-colors hover:bg-accent/15 hover:text-accent dark:text-slate-300"
     >
       {resolved === undefined ? null : resolved === "dark" ? (
         <Sun size={18} />

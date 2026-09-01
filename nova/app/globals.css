@@ -2,6 +2,13 @@
 @config "../tailwind.config.ts";
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Accent color — a real CSS variable, not a baked-in value, so JS can
+   change it at runtime (via SettingsPanel) and every bg-accent/text-accent/
+   etc. utility across the app updates instantly without a rebuild. */
+@theme {
+  --color-accent: #f5c2e7;
+}
+
 /* Syntax highlighting for code blocks (rehype-highlight).
    Hand-tuned rather than an imported theme, so it matches the app's
    beige/slate palette in both light and dark mode from the same file. */

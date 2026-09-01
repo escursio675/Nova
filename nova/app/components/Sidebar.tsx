@@ -78,8 +78,8 @@ export default function Sidebar({
             onClick={() => onChangeView("notes")}
             className={`flex items-center gap-3 px-3 py-2 text-left font-ui text-sm transition-colors ${
               view === "notes"
-                ? "border-l-2 border-slate-700 bg-slate-300/20 font-bold text-slate-800 dark:border-slate-300 dark:bg-slate-700/30 dark:text-slate-200"
-                : "text-slate-600 hover:bg-slate-200/60 dark:text-slate-400 dark:hover:bg-slate-700/60"
+                ? "border-l-2 border-accent bg-accent/15 font-bold text-slate-800 dark:text-slate-200"
+                : "text-slate-600 hover:bg-accent/10 hover:text-accent dark:text-slate-400"
             }`}
           >
             <FileText size={18} />
@@ -96,7 +96,7 @@ export default function Sidebar({
                   type="button"
                   onClick={collapseAll}
                   title="Collapse all folders"
-                  className="flex items-center gap-1 text-slate-400 transition-colors hover:text-slate-700 dark:text-slate-500 dark:hover:text-slate-300"
+                  className="flex items-center gap-1 text-slate-400 transition-colors hover:text-accent dark:text-slate-500"
                 >
                   <ChevronsDownUp size={14} />
                 </button>
@@ -132,8 +132,8 @@ export default function Sidebar({
             }}
             className={`flex items-center gap-3 px-3 py-2 text-left font-ui text-sm transition-colors ${
               view === "tags"
-                ? "border-l-2 border-slate-700 bg-slate-300/20 font-bold text-slate-800 dark:border-slate-300 dark:bg-slate-700/30 dark:text-slate-200"
-                : "text-slate-600 hover:bg-slate-200/60 dark:text-slate-400 dark:hover:bg-slate-700/60"
+                ? "border-l-2 border-accent bg-accent/15 font-bold text-slate-800 dark:text-slate-200"
+                : "text-slate-600 hover:bg-accent/10 hover:text-accent dark:text-slate-400"
             }`}
           >
             <Tag size={18} />
@@ -148,8 +148,8 @@ export default function Sidebar({
             }}
             className={`flex items-center gap-3 px-3 py-2 text-left font-ui text-sm transition-colors ${
               view === "graph"
-                ? "border-l-2 border-slate-700 bg-slate-300/20 font-bold text-slate-800 dark:border-slate-300 dark:bg-slate-700/30 dark:text-slate-200"
-                : "text-slate-600 hover:bg-slate-200/60 dark:text-slate-400 dark:hover:bg-slate-700/60"
+                ? "border-l-2 border-accent bg-accent/15 font-bold text-slate-800 dark:text-slate-200"
+                : "text-slate-600 hover:bg-accent/10 hover:text-accent dark:text-slate-400"
             }`}
           >
             <Network size={18} />

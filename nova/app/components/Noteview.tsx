@@ -77,7 +77,7 @@ export default function NoteView({ note, notes, onSelectNote, assets }: NoteView
                       <button
                         type="button"
                         onClick={() => onSelectNote(targetNote.id)}
-                        className="cursor-pointer border-b border-dotted border-slate-400 font-medium text-slate-800 no-underline hover:border-solid hover:text-slate-950 dark:text-slate-200 dark:hover:text-white"
+                        className="cursor-pointer border-b border-dotted border-slate-400 font-medium text-slate-800 no-underline transition-colors hover:border-accent hover:text-accent dark:text-slate-200"
                       >
                         {children}
                       </button>

@@ -13,6 +13,7 @@ import type { View } from "@/lib/view";
 import { releaseVaultAssets } from "@/lib/vault";
 import { setThemeChoice, type ThemeChoice } from "@/lib/theme";
 import GraphView from "./components/Graphview";
+import { applyStoredAccent } from "@/lib/accent";
 
 interface HistoryState {
   stack: string[];
@@ -32,6 +33,10 @@ export default function Home() {
   const notes = vault?.notes ?? [];
   const selectedNote = notes.find((n) => n.id === selectedNoteId) ?? null;
   const canGoBack = history.index > 0;
+
+  useEffect(() => {
+    applyStoredAccent();
+  }, []);
 
   // Global shortcuts: search, back navigation, theme toggle, sidebar toggle.
   useEffect(() => {

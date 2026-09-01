@@ -87,7 +87,7 @@ export default function AppShell({
       />
 
       <main
-        className={`flex h-full min-h-0 flex-1 flex-col bg-beige-100 transition-[margin-left] duration-200 dark:bg-slate-900 ${
+        className={`flex h-full flex-1 flex-col bg-beige-100 transition-[margin-left] duration-200 dark:bg-slate-900 ${
           desktopOpen ? "md:ml-[260px]" : "md:ml-0"
         }`}
       >
@@ -97,7 +97,7 @@ export default function AppShell({
               type="button"
               onClick={toggleSidebar}
               aria-label="Toggle sidebar"
-              className="flex items-center justify-center rounded-full p-1 transition-colors hover:bg-slate-200/60 hover:text-slate-900 dark:hover:bg-slate-700/60 dark:hover:text-white"
+              className="flex items-center justify-center rounded-full p-1 transition-colors hover:bg-accent/15 hover:text-accent"
             >
               <PanelLeft size={20} />
             </button>
@@ -106,7 +106,7 @@ export default function AppShell({
               onClick={onGoBack}
               disabled={!canGoBack}
               aria-label="Go back"
-              className="flex items-center justify-center rounded-full p-1 text-slate-500 transition-colors enabled:hover:bg-slate-200/60 enabled:hover:text-slate-900 disabled:opacity-30 dark:text-slate-400 dark:enabled:hover:bg-slate-700/60 dark:enabled:hover:text-white"
+              className="flex items-center justify-center rounded-full p-1 text-slate-500 transition-colors enabled:hover:bg-accent/15 enabled:hover:text-accent disabled:opacity-30 dark:text-slate-400"
             >
               <ArrowLeft size={18} />
             </button>
@@ -120,7 +120,7 @@ export default function AppShell({
             <button
               type="button"
               onClick={onOpenSearch}
-              className="flex items-center gap-2 border border-slate-300 px-2.5 py-1 font-ui text-xs text-slate-500 transition-colors hover:bg-slate-200/60 dark:border-slate-600 dark:text-slate-400 dark:hover:bg-slate-700/60"
+              className="flex items-center gap-2 border border-slate-300 px-2.5 py-1 font-ui text-xs text-slate-500 transition-colors hover:border-accent hover:text-accent dark:border-slate-600 dark:text-slate-400"
             >
               <Search size={14} />
               <span className="hidden sm:inline">Search</span>
@@ -130,12 +130,12 @@ export default function AppShell({
             </button>
             <Settings
               size={20}
-              className="cursor-pointer transition-colors hover:text-slate-900 dark:hover:text-white"
+              className="cursor-pointer transition-colors hover:text-accent"
               onClick={onOpenSettings}
             />
             <Keyboard
               size={20}
-              className="cursor-pointer transition-colors hover:text-slate-900 dark:hover:text-white"
+              className="cursor-pointer transition-colors hover:text-accent"
               onClick={onOpenShortcuts}
             />
             <ThemeToggle />
