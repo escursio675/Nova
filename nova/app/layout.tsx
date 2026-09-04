@@ -41,6 +41,17 @@ const themeInitScript = `
     } else {
       document.documentElement.classList.remove("dark");
     }
+
+    var storedFont = localStorage.getItem("noteFont");
+    var fontVarMap = {
+      serif: "var(--font-serif)",
+      sans: "var(--font-ui)",
+      mono: "var(--font-mono)",
+    };
+    if (storedFont && fontVarMap[storedFont]) {
+      document.documentElement.style.setProperty("--font-note", fontVarMap[storedFont]);
+    }
+    
   } catch (e) {}
 })();
 `;

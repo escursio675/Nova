@@ -28,7 +28,10 @@ export default function NoteView({ note, notes, onSelectNote, assets }: NoteView
     <div className="flex w-full flex-1 justify-center overflow-y-auto pt-8 pb-32 sm:pt-10">
       <article className="w-full max-w-[800px] px-4 sm:px-6">
         <header className="mb-6 border-b border-slate-300 pb-4 dark:border-slate-700">
-          <h1 className="mb-4 font-serif text-3xl font-bold text-slate-900 dark:text-white sm:text-4xl">
+          <h1
+            className="mb-4 text-3xl font-bold text-slate-900 dark:text-white sm:text-4xl"
+            style={{ fontFamily: "var(--font-note)" }}
+          >
             {note.title}
           </h1>
           <div className="flex flex-wrap gap-2">
@@ -44,10 +47,11 @@ export default function NoteView({ note, notes, onSelectNote, assets }: NoteView
         </header>
 
         <div
+          style={{ fontFamily: "var(--font-note)" }}
           className="
-            prose prose-slate max-w-none font-serif
+            prose prose-slate max-w-none
             dark:prose-invert
-            prose-headings:font-serif prose-headings:font-semibold
+            prose-headings:font-semibold
             prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl
             prose-p:leading-relaxed
             prose-blockquote:border-l-4 prose-blockquote:border-slate-400 prose-blockquote:italic prose-blockquote:text-slate-500

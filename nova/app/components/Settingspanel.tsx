@@ -4,6 +4,12 @@ import { useEffect, useState } from "react";
 import { X, Sun, Moon, Monitor } from "lucide-react";
 import { getStoredChoice, setThemeChoice, type ThemeChoice } from "@/lib/theme";
 import { getStoredAccent, setAccentColor, DEFAULT_ACCENT } from "@/lib/accent";
+import {
+  getStoredNoteFont,
+  setNoteFont,
+  DEFAULT_NOTE_FONT,
+  type NoteFont,
+} from "@/lib/font";
 
 interface SettingsPanelProps {
   open: boolean;
@@ -27,15 +33,23 @@ const ACCENT_PRESETS = [
   "#fab387", // orange
 ];
 
+const fontOptions: { value: NoteFont; label: string; sample: string }[] = [
+  { value: "serif", label: "Serif", sample: "Ibarra Real Nova" },
+  { value: "sans", label: "Sans", sample: "Inter" },
+  { value: "mono", label: "Mono", sample: "JetBrains Mono" },
+];
+
 export default function SettingsPanel({ open, onClose }: SettingsPanelProps) {
   const [choice, setChoice] = useState<ThemeChoice>("system");
   const [accent, setAccent] = useState<string>(DEFAULT_ACCENT);
+  const [noteFont, setNoteFontState] = useState<NoteFont>(DEFAULT_NOTE_FONT);
 
   // Sync with whatever's actually stored whenever the panel opens.
   useEffect(() => {
     if (open) {
       setChoice(getStoredChoice());
       setAccent(getStoredAccent());
+      setNoteFontState(getStoredNoteFont());
     }
   }, [open]);
 
@@ -47,6 +61,11 @@ export default function SettingsPanel({ open, onClose }: SettingsPanelProps) {
   const handleAccentChange = (hex: string) => {
     setAccent(hex);
     setAccentColor(hex);
+  };
+
+  const handleFontChange = (font: NoteFont) => {
+    setNoteFontState(font);
+    setNoteFont(font);
   };
 
   useEffect(() => {
@@ -140,6 +159,43 @@ export default function SettingsPanel({ open, onClose }: SettingsPanelProps) {
                 aria-label="Pick a custom accent color"
               />
             </label>
+          </div>
+
+          <h3 className="mb-3 mt-6 font-ui text-xs font-medium uppercase tracking-wide text-slate-400 dark:text-slate-500">
+            Note Font
+          </h3>
+
+          <div className="grid grid-cols-3 gap-2">
+            {fontOptions.map((opt) => {
+              const isActive = noteFont === opt.value;
+              return (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => handleFontChange(opt.value)}
+                  className={`flex flex-col items-center gap-1 border px-2 py-3 font-ui text-xs transition-colors ${
+                    isActive
+                      ? "border-accent bg-accent/15 text-slate-800 dark:text-slate-100"
+                      : "border-slate-300 text-slate-500 hover:border-accent hover:text-accent dark:border-slate-600 dark:text-slate-400"
+                  }`}
+                >
+                  <span
+                    className="text-lg leading-none"
+                    style={{
+                      fontFamily:
+                        opt.value === "serif"
+                          ? "var(--font-serif)"
+                          : opt.value === "sans"
+                          ? "var(--font-ui)"
+                          : "var(--font-mono)",
+                    }}
+                  >
+                    Aa
+                  </span>
+                  {opt.label}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>

@@ -31,7 +31,7 @@ const IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp", ".bm
 // preceded by whitespace (so it doesn't match mid-word).
 const HASHTAG_REGEX = /(^|\s)#([^\s#]+)/g;
 
-function extractTags(content: string): { label: string }[] {
+export function extractTags(content: string): { label: string }[] {
   const found = new Set<string>();
   let match: RegExpExecArray | null;
   HASHTAG_REGEX.lastIndex = 0;
@@ -46,7 +46,7 @@ function isIgnored(relativePath: string): boolean {
   return relativePath.split("/").some((segment) => segment.startsWith("."));
 }
 
-function isImage(fileName: string): boolean {
+export function isImage(fileName: string): boolean {
   const lower = fileName.toLowerCase();
   return IMAGE_EXTENSIONS.some((ext) => lower.endsWith(ext));
 }
@@ -164,7 +164,7 @@ export function resolveAssetSrc(
 }
 
 // Folders first, then files, both alphabetical — matches Obsidian's default sort.
-function sortTree(node: FolderNode) {
+export function sortTree(node: FolderNode) {
   node.children.sort((a, b) => {
     if (a.type !== b.type) return a.type === "folder" ? -1 : 1;
     return a.name.localeCompare(b.name);

@@ -9,6 +9,14 @@
   --color-accent: #f5c2e7;
 }
 
+/* Selectable note font — defaults to the serif font already loaded via
+   next/font. SettingsPanel repoints this at --font-ui (Inter) or
+   --font-mono (JetBrains Mono) at runtime; nothing here needs to change
+   when it does, since NoteView reads var(--font-note) directly. */
+:root {
+  --font-note: var(--font-serif);
+}
+
 /* Text selection uses the same accent color, so it updates automatically
    whenever the user picks a new one in Settings. */
 ::selection {

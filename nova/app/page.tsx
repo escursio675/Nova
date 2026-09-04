@@ -14,6 +14,7 @@ import { releaseVaultAssets } from "@/lib/vault";
 import { setThemeChoice, type ThemeChoice } from "@/lib/theme";
 import GraphView from "./components/Graphview";
 import { applyStoredAccent } from "@/lib/accent";
+import { applyStoredNoteFont } from "@/lib/font";
 
 interface HistoryState {
   stack: string[];
@@ -36,6 +37,7 @@ export default function Home() {
 
   useEffect(() => {
     applyStoredAccent();
+    applyStoredNoteFont();
   }, []);
 
   // Global shortcuts: search, back navigation, theme toggle, sidebar toggle.
