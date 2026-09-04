@@ -4,6 +4,7 @@ import { useState } from "react";
 import { FileText, Tag, Network, ChevronsDownUp } from "lucide-react";
 import FileTree from "./Filetree";
 import VaultUpload from "./Vaultupload";
+import GithubImport from "./Githubimport";
 import type { ParsedVault, FolderNode } from "@/lib/vault";
 import { getAllFolderPaths } from "@/lib/vault";
 import type { View } from "@/lib/view";
@@ -63,7 +64,7 @@ export default function Sidebar({
       >
         <div className="mb-6 px-4">
           <h1 className="truncate font-serif text-xl font-semibold text-slate-800 dark:text-slate-300">
-            {vault ? vault.vaultName : "Digital Garden"}
+            {vault ? vault.vaultName : "Nova"}
           </h1>
           <p className="mt-1 font-ui text-xs text-slate-500 dark:text-slate-400">
             {vault ? "Vault loaded" : "No vault loaded"}
@@ -71,6 +72,7 @@ export default function Sidebar({
         </div>
 
         <VaultUpload onLoaded={onVaultLoaded} />
+        <GithubImport onLoaded={onVaultLoaded} />
 
         <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-2">
           <button

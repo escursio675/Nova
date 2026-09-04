@@ -2,6 +2,7 @@
 
 import { FolderOpen, FileText } from "lucide-react";
 import VaultUpload from "./Vaultupload";
+import GithubImport from "./Githubimport";
 import type { ParsedVault } from "@/lib/vault";
 
 interface EmptyStateProps {
@@ -30,8 +31,14 @@ export default function EmptyState({ vault, onVaultLoaded }: EmptyStateProps) {
       </div>
 
       {!hasVault && (
-        <div className="mt-2">
+        <div className="mt-2 flex flex-col items-center gap-4">
           <VaultUpload onLoaded={onVaultLoaded} variant="dropzone" />
+          <div className="flex items-center gap-3 text-xs text-slate-400 dark:text-slate-500">
+            <span className="h-px w-8 bg-slate-300 dark:bg-slate-700" />
+            or
+            <span className="h-px w-8 bg-slate-300 dark:bg-slate-700" />
+          </div>
+          <GithubImport onLoaded={onVaultLoaded} variant="dropzone" />
         </div>
       )}
     </div>
