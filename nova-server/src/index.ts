@@ -8,7 +8,24 @@ import { webhookRouter } from "./routes/webhook.js";
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-app.use(cors());
+// Comma-separated list, so both local dev and a future production frontend
+// URL can be allowed at once, e.g. "http://localhost:3000,https://nova.app".
+const allowedOrigins = (process.env.FRONTEND_URL || "http://localhost:3000")
+  .split(",")
+  .map((origin) => origin.trim());
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.warn(`[cors] Rejected request from disallowed origin: ${origin}`);
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+  })
+);
 
 // IMPORTANT: mounted before app.use(express.json()) below. The webhook
 // route defines its own express.raw() middleware (see routes/webhook.ts)
