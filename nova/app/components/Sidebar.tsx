@@ -65,7 +65,7 @@ export default function Sidebar({
       >
         <div className="mb-6 px-4">
           <h1 className="truncate font-serif text-xl font-semibold text-slate-800 dark:text-slate-300">
-            {vault ? vault.vaultName : "Digital Garden"}
+            {vault ? vault.vaultName : "Nova"}
           </h1>
           <p className="mt-1 font-ui text-xs text-slate-500 dark:text-slate-400">
             {vault ? "Vault loaded" : "No vault loaded"}
