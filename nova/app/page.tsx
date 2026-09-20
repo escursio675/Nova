@@ -15,6 +15,7 @@ import { setThemeChoice, type ThemeChoice } from "@/lib/theme";
 import GraphView from "./components/Graphview";
 import { applyStoredAccent } from "@/lib/accent";
 import { applyStoredNoteFont } from "@/lib/font";
+import { importFromBackend } from "@/lib/backend";
 
 interface HistoryState {
   stack: string[];
@@ -30,6 +31,9 @@ export default function Home() {
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [view, setView] = useState<View>("notes");
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  // Tracks whether we've finished checking the backend for an already-synced
+  // vault. Prevents a flash of "no vault loaded" while that check is in flight.
+  const [checkingBackend, setCheckingBackend] = useState(true);
 
   const notes = vault?.notes ?? [];
   const selectedNote = notes.find((n) => n.id === selectedNoteId) ?? null;
@@ -38,6 +42,31 @@ export default function Home() {
   useEffect(() => {
     applyStoredAccent();
     applyStoredNoteFont();
+  }, []);
+
+  // On first load, automatically check the backend for an already-synced
+  // vault — so visitors see notes immediately instead of needing to
+  // manually click "Load from Server" every single visit. If nothing's
+  // been synced yet (404) or the backend is unreachable, this silently
+  // falls through to the normal empty state with its three manual options.
+  useEffect(() => {
+    let cancelled = false;
+
+    importFromBackend()
+      .then((loaded) => {
+        if (!cancelled) handleVaultLoaded(loaded);
+      })
+      .catch((err) => {
+        console.warn("[auto-load] No vault available from backend yet:", err);
+      })
+      .finally(() => {
+        if (!cancelled) setCheckingBackend(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Global shortcuts: search, back navigation, theme toggle, sidebar toggle.
@@ -153,6 +182,12 @@ export default function Home() {
             onSelectNote={handleSelectNote}
             assets={vault?.assets ?? {}}
           />
+        ) : checkingBackend ? (
+          <div className="flex flex-1 items-center justify-center">
+            <p className="font-ui text-sm text-slate-400 dark:text-slate-500">
+              Checking for saved notes...
+            </p>
+          </div>
         ) : (
           <EmptyState vault={vault} onVaultLoaded={handleVaultLoaded} />
         )}
